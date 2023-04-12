@@ -1,0 +1,17 @@
+todo
+
+.
+
+
+
+
+
+
+
+
+
+-----------------------------------
+done
+. setup a django project
+. change mysite to src
+. create home app
