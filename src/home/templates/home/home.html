@@ -3,12 +3,15 @@
 {% block content %}
 
 <div style="border: 2px solid black;">
-    <h1>This is the body</h1>
-    <p>Here is where you put stuff that should be in the body of your website</p>
 
-    <p>{{some_string}}</p>
+    <h3>با سلام خدمت تیم محترم آچاره</h3>
+    <h3>اکانت های موجود در دیتابیس به این صورت میباشد</h3>
+    <h3>پسورد همه اکانت ها Admin123! میباشد</h3>
 
-    {% include 'home/snippets/body_snippet.html' %}
+    {% for account in accounts %}
+        <p> {{ account }} </p>
+    {% endfor %}
+
 </div>
 
 
