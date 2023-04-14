@@ -57,14 +57,27 @@ def login_view(request, account_id):
 
 def register_view(request, phone_number):
     context = {}
+    context['phone_number'] = phone_number
 
-    # if request.POST:
-    #      form = RegistrationForm(request.POST)
-    #      if form.is_valid():
-    #           form.save()
+    if request.POST:
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            print(form.fields)
+            form.save()
+            phone = phone_number
+            raw_password = form.cleaned_data.get('password1')
+            account = authenticate(phone_number= phone, password = raw_password)
+            login(request, account)
+            return redirect('home')
+        else:
+            context['registration_form'] = form
+    else: # GET request
+        form = RegistrationForm()
+        context['registration_form'] = form
 
 
-    return render(request, 'account/register.html', {})
+
+    return render(request, 'account/register.html', context)
 
 
 def logout_view(request):

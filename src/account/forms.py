@@ -6,13 +6,12 @@ from account.models import Account
  
 
 class RegistrationForm(UserCreationForm):
-    # email = forms.EmailField(label="ایمیل", max_length=60, help_text="ایمیل خود را وارد کنید")
+    email = forms.EmailField(max_length=60, help_text="ایمیل خود را وارد کنید")
 
-    # class Meta:
-    #     model = Account
-    #     fields = ["email", "first_name", "last_name", "password1", "password2",]
-    pass
-
+    class Meta:
+        model = Account
+        fields = ["phone_number" ,"email", "first_name", "last_name", "password1", "password2",]
+        
 
 class AccountAuthenticationForm(forms.ModelForm):
 

@@ -1,18 +1,65 @@
 {% extends 'base.html' %}
+{% load static %}
+
 
 {% block content %}
+<style type="text/css">
 
-<div style="border: 2px solid black;">
+	@media (max-width: 768px) { 
+		.right-column{
+			margin-left: 0px;
+		}
+	}
 
-    <h3>با سلام خدمت تیم محترم آچاره</h3>
-    <h3>اکانت های موجود در دیتابیس به این صورت میباشد</h3>
-    <h3>پسورد همه اکانت ها Admin123! میباشد</h3>
+	@media (min-width: 768px) { 
+		.right-column{
+			margin-left: 20px;
+		}
+	}
 
-    {% for account in accounts %}
-        <p> {{ account }} </p>
-    {% endfor %}
+	.blog-post-container{
+		margin-bottom: 20px;
+		width: 100%;
+	}
+	.create-post-bar{
+		background-color: #fff;
+		margin-bottom:20px;
+	}
 
+	.left-column{
+		padding:0px;
+	}
+
+	.right-column{
+		padding:0px;
+	}
+	.lead{
+		font-size: 17px;
+	}
+</style>
+
+<div class="container">
+	<div class="row">
+		<div class="right-column col-lg-7 offset-lg-1">
+            <div class="blog-post-container" style="direction: rtl; text-align: right;">
+                <br>
+                <h4>با سلام خدمت تیم محترم آچاره</h4>
+                <h4>اکانت های موجود در دیتابیس به این صورت میباشد:</h4>
+                {% for account in accounts %}
+                    <p> {{ account.phone_number }} </p>
+                {% endfor %}
+
+				<h4>از فرصتی که در اختیار من قرار دادید صمیمانه تشکر میکنم</h4>
+            </div>
+		</div>
+
+		<!-- Right 'create post' column  -->
+		<div class="left-column col-lg-3 d-lg-flex d-none flex-column">
+            <div class="card create-post-bar d-flex flex-column p-3">
+				<img class="img-fluid d-block m-auto pb-2" src="{% static 'logo.png' %}" width="72" height="72">
+				<p class="lead" style="text-align: center;">ساخته شده توسط امیرحسین ارجمند توسط پایتون و فریم ورک جنگو</p>
+			</div>
+		</div>
+	</div>
 </div>
-
-
 {% endblock content %}
