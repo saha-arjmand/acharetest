@@ -9,6 +9,7 @@ from account.views import(
     authenticate_view,
     login_view,
     register_view,
+    logout_view,
 )
 
 urlpatterns = [
@@ -21,4 +22,6 @@ urlpatterns = [
     path('authenticate/login/<int:account_id>/', login_view, name="login"),
     # register
     path('authenticate/register/<str:phone_number>/', register_view, name="register"),
+    # logout
+    path('logout/', logout_view, name="logout"),
 ]

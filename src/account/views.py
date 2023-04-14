@@ -65,3 +65,8 @@ def register_view(request, phone_number):
 
 
     return render(request, 'account/register.html', {})
+
+
+def logout_view(request):
+    logout(request)
+    return redirect('home')

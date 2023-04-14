@@ -11,7 +11,7 @@
     {% if request.user.is_authenticated %}
         <p>
             <a href="{% url 'home' %}">خانه</a> |
-            <a href="#">خروج</a>
+            <a href="{% url 'logout' %}">خروج</a>
         </p>
         <p>سلام, {{request.user.first_name}}</p>
 
