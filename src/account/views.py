@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
-from account.forms import AccountAuthenticationForm, loginForm, RegistrationForm, OtpForm
+from account.forms import AccountAuthenticationForm, loginForm, RegistrationForm, OtpForm, OtpFormPhoneNumber
 from django.contrib.auth import login, authenticate, logout
-from .models import Account
+from .models import Account, OtpCode
 from . import helper 
 from django.http import HttpResponseRedirect
 from django.urls import reverse
@@ -29,8 +29,8 @@ def authenticate_view(request):
                     return redirect(f"login/{anyID}/")
             
             else: # phone number does not exist in database
-                form = AccountAuthenticationForm(request.POST)
-                account_exist = Account.objects.filter(phone_number=phone_number).exists()
+                form = OtpFormPhoneNumber(request.POST)
+                account_exist = OtpCode.objects.filter(phone_number=phone_number).exists()
                 if form.is_valid():
                     if account_exist == False:
                         user = form.save(commit=False)
@@ -40,7 +40,6 @@ def authenticate_view(request):
                         # helper.sent_otp(phone_number, otp)
                         # save otp
                         user.otp = otp
-                        user.is_active = False
                         user.save()
                         return redirect(f"otp/{phone_number}/")
                     else:
@@ -48,7 +47,7 @@ def authenticate_view(request):
                         otp = helper.get_random_otp()
                         print(f"Otp for test is : {otp}")
                         # helper.sent_otp(phone_number, otp)
-                        user = Account.objects.filter(phone_number=phone_number).update(otp=otp)
+                        user = OtpCode.objects.filter(phone_number=phone_number).update(otp=otp)
                         return redirect(f"otp/{phone_number}/")
                     
 
@@ -92,7 +91,7 @@ def login_view(request, account_id):
 def otp_view(request, phone_number):
     context = {}
 
-    user = Account.objects.get(phone_number = phone_number)
+    user = OtpCode.objects.get(phone_number = phone_number)
 
     if request.POST:
         form = OtpForm(request.POST)
@@ -127,6 +126,7 @@ def register_view(request):
             form.save()
             phone = phone_number
             raw_password = form.cleaned_data.get('password1')
+
             account = authenticate(phone_number= phone, password = raw_password)
             login(request, account)
             return redirect('home')

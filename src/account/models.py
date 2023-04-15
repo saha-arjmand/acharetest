@@ -45,8 +45,6 @@ class Account(AbstractBaseUser):
 
     username                = None
     phone_number            = models.CharField(max_length=11, unique=True)
-    otp                     = models.PositiveIntegerField(blank=True, null=True)
-    otp_create_time         = models.DateTimeField(auto_now=True)
     email                   = models.EmailField(verbose_name="email", max_length=60)
     first_name              = models.CharField(max_length=30)
     last_name               = models.CharField(max_length=30)
@@ -79,3 +77,9 @@ class Account(AbstractBaseUser):
     
     def has_module_perms(self, app_label):
         return True
+
+
+class OtpCode(models.Model):
+    phone_number            = models.CharField(max_length=11, unique=True)
+    otp                     = models.PositiveIntegerField(blank=True, null=True)
+    otp_create_time         = models.DateTimeField(auto_now=True)

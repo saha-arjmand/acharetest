@@ -1,5 +1,5 @@
 from django.contrib import admin
-from account.models import Account
+from account.models import Account, OtpCode
 from django.contrib.auth.admin import UserAdmin
 
 class AccountAdmin(UserAdmin):
@@ -13,3 +13,6 @@ class AccountAdmin(UserAdmin):
     fieldsets = ()
 
 admin.site.register(Account, AccountAdmin)
+
+
+admin.site.register(OtpCode)

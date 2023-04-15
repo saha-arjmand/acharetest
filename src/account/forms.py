@@ -2,9 +2,9 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate
 # my models
-from account.models import Account
+from account.models import Account, OtpCode
  
-
+# UserCreationForm
 class RegistrationForm(UserCreationForm):
     email = forms.EmailField(max_length=60, help_text="ایمیل خود را وارد کنید")
 
@@ -39,6 +39,16 @@ class loginForm(forms.ModelForm):
         # if not authenticate(password = password):
         #     raise forms.ValidationError("Invalid login")
 
+class OtpFormPhoneNumber(forms.ModelForm):
+    phone_number = forms.CharField(label="شماره موبایل", max_length=11)
+
+    class Meta:
+        model = OtpCode
+        fields = ['phone_number']
+
+    def clean(self) :
+        phone_number = self.cleaned_data['phone_number']
+    
 
 class OtpForm(forms.ModelForm):
 
