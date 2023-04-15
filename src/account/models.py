@@ -47,7 +47,7 @@ class Account(AbstractBaseUser):
     phone_number            = models.CharField(max_length=11, unique=True)
     otp                     = models.PositiveIntegerField(blank=True, null=True)
     otp_create_time         = models.DateTimeField(auto_now=True)
-    email                   = models.EmailField(verbose_name="email", max_length=60, unique=True)
+    email                   = models.EmailField(verbose_name="email", max_length=60)
     first_name              = models.CharField(max_length=30)
     last_name               = models.CharField(max_length=30)
     ip                      = models.CharField(max_length=50, blank=True, null=True)

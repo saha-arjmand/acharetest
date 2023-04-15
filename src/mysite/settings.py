@@ -122,3 +122,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media_cdn')
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# sms otp api (kavenegar)
+Kavenegar_API = '5A7A5167614944624A6C676C7165632F77516C4F446B6D59524A476C7062472B337971366836335558526F3D'

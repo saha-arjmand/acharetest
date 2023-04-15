@@ -38,3 +38,15 @@ class loginForm(forms.ModelForm):
 
         # if not authenticate(password = password):
         #     raise forms.ValidationError("Invalid login")
+
+
+class OtpForm(forms.ModelForm):
+
+    otp = forms.IntegerField()
+
+    class Meta:
+        model = Account
+        fields = ['otp',]
+
+    def clean(self) :
+        otp = self.cleaned_data['otp']

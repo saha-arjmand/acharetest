@@ -1,7 +1,10 @@
 from django.shortcuts import render, redirect
-from account.forms import AccountAuthenticationForm, loginForm, RegistrationForm
+from account.forms import AccountAuthenticationForm, loginForm, RegistrationForm, OtpForm
 from django.contrib.auth import login, authenticate, logout
 from .models import Account
+from . import helper 
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 
 
 def authenticate_view(request):
@@ -11,12 +14,43 @@ def authenticate_view(request):
         form = AccountAuthenticationForm(request.POST)
         if form.is_valid():
             phone_number = request.POST['phone_number']
-            if Account.objects.filter(phone_number=phone_number).exists():
+
+            account_exist = Account.objects.filter(phone_number=phone_number).exists()
+            email_exist_query = Account.objects.filter(phone_number=phone_number).values_list('email', flat=True)
+            for anyEmail in email_exist_query:
+                if len(str(anyEmail)) > 0:
+                    email_exist = True
+                else:
+                    email_exist = False
+
+            if  account_exist == True and email_exist == True:
                 id = Account.objects.filter(phone_number=phone_number).values_list('id', flat=True)
                 for anyID in id:
                     return redirect(f"login/{anyID}/")
-            else:
-                return redirect(f"register/{phone_number}/")
+            
+            else: # phone number does not exist in database
+                form = AccountAuthenticationForm(request.POST)
+                account_exist = Account.objects.filter(phone_number=phone_number).exists()
+                if form.is_valid():
+                    if account_exist == False:
+                        user = form.save(commit=False)
+                        # send otp
+                        otp = helper.get_random_otp()
+                        print(f"Otp for test is : {otp}")
+                        # helper.sent_otp(phone_number, otp)
+                        # save otp
+                        user.otp = otp
+                        user.is_active = False
+                        user.save()
+                        return redirect(f"otp/{phone_number}/")
+                    else:
+                        # send otp
+                        otp = helper.get_random_otp()
+                        print(f"Otp for test is : {otp}")
+                        # helper.sent_otp(phone_number, otp)
+                        user = Account.objects.filter(phone_number=phone_number).update(otp=otp)
+                        return redirect(f"otp/{phone_number}/")
+                    
 
     else: # Get request
         form = AccountAuthenticationForm()
@@ -62,7 +96,6 @@ def register_view(request, phone_number):
     if request.POST:
         form = RegistrationForm(request.POST)
         if form.is_valid():
-            print(form.fields)
             form.save()
             phone = phone_number
             raw_password = form.cleaned_data.get('password1')
@@ -83,3 +116,32 @@ def register_view(request, phone_number):
 def logout_view(request):
     logout(request)
     return redirect('home')
+
+
+def otp_view(request, phone_number):
+    context = {}
+
+    user = Account.objects.get(phone_number = phone_number)
+
+    if request.POST:
+        form = OtpForm(request.POST)
+        if form.is_valid():
+            if user.otp != int(request.POST.get('otp')):
+                print("noooooooooooooooooooo")
+                return HttpResponseRedirect(reverse('authenticate'))
+            else:
+                user.is_active = True
+                user.save()
+                # return HttpResponseRedirect(reverse(f'authenticate/register/{phone_number}/'))
+                print("yeeeeeeeeeeeeeeeeeeeees")
+                
+        else:
+            print("not valid")
+
+    else: # Get request
+        form = OtpForm()
+
+
+    context['otp_form'] = form
+    print(context)
+    return render(request, 'account/otp.html', context)
