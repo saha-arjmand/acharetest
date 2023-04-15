@@ -89,7 +89,35 @@ def login_view(request, account_id):
     return render(request, 'account/login.html', context)
 
 
-def register_view(request, phone_number):
+def otp_view(request, phone_number):
+    context = {}
+
+    user = Account.objects.get(phone_number = phone_number)
+
+    if request.POST:
+        form = OtpForm(request.POST)
+        if form.is_valid():
+            if user.otp != int(request.POST.get('otp')):
+                return HttpResponseRedirect(reverse('authenticate'))
+            else:
+                user.is_active = True
+                user.save()
+                try:
+                    request.session['user_mobile'] = phone_number
+                    return redirect('register')
+                except Exception as e:
+                    print(e)
+
+    else: # Get request
+        form = OtpForm()
+
+
+    context['otp_form'] = form
+    return render(request, 'account/otp.html', context)
+
+
+def register_view(request):
+    phone_number = request.session.get('user_mobile')
     context = {}
     context['phone_number'] = phone_number
 
@@ -108,8 +136,6 @@ def register_view(request, phone_number):
         form = RegistrationForm()
         context['registration_form'] = form
 
-
-
     return render(request, 'account/register.html', context)
 
 
@@ -118,30 +144,3 @@ def logout_view(request):
     return redirect('home')
 
 
-def otp_view(request, phone_number):
-    context = {}
-
-    user = Account.objects.get(phone_number = phone_number)
-
-    if request.POST:
-        form = OtpForm(request.POST)
-        if form.is_valid():
-            if user.otp != int(request.POST.get('otp')):
-                print("noooooooooooooooooooo")
-                return HttpResponseRedirect(reverse('authenticate'))
-            else:
-                user.is_active = True
-                user.save()
-                # return HttpResponseRedirect(reverse(f'authenticate/register/{phone_number}/'))
-                print("yeeeeeeeeeeeeeeeeeeeees")
-                
-        else:
-            print("not valid")
-
-    else: # Get request
-        form = OtpForm()
-
-
-    context['otp_form'] = form
-    print(context)
-    return render(request, 'account/otp.html', context)

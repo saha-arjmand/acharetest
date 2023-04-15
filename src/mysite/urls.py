@@ -21,10 +21,11 @@ urlpatterns = [
     path('authenticate/', authenticate_view, name="authenticate"),
     # login
     path('authenticate/login/<int:account_id>/', login_view, name="login"),
-    # register
-    path('authenticate/register/<str:phone_number>/', register_view, name="register"),
-    # logout
-    path('logout/', logout_view, name="logout"),
     # otp
     path('authenticate/otp/<str:phone_number>/', otp_view, name="otp"),
+    # register
+    path(' register/', register_view, name="register"),
+    # logout
+    path('logout/', logout_view, name="logout"),
+
 ]
