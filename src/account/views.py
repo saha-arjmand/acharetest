@@ -5,6 +5,7 @@ from .models import Account, OtpCode
 from . import helper 
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+import datetime
 
 
 def authenticate_view(request):
@@ -28,27 +29,32 @@ def authenticate_view(request):
                 for anyID in id:
                     return redirect(f"login/{anyID}/")
             
-            else: # phone number does not exist in database
+            else: # phone number and email don't exist in database
                 form = OtpFormPhoneNumber(request.POST)
                 account_exist = OtpCode.objects.filter(phone_number=phone_number).exists()
-                if form.is_valid():
-                    if account_exist == False:
-                        user = form.save(commit=False)
-                        # send otp
-                        otp = helper.get_random_otp()
-                        print(f"Otp for test is : {otp}")
-                        # helper.sent_otp(phone_number, otp)
-                        # save otp
-                        user.otp = otp
-                        user.save()
-                        return redirect(f"otp/{phone_number}/")
-                    else:
-                        # send otp
-                        otp = helper.get_random_otp()
-                        print(f"Otp for test is : {otp}")
-                        # helper.sent_otp(phone_number, otp)
-                        user = OtpCode.objects.filter(phone_number=phone_number).update(otp=otp)
-                        return redirect(f"otp/{phone_number}/")
+
+                # update otp_create_time
+                if helper.wait_sms(phone_number): # Avoid repeated user requests
+                    OtpCode.objects.filter(phone_number=phone_number).update(otp_create_time=datetime.datetime.now())
+
+                    if form.is_valid():
+                        if account_exist == False:
+                            user = form.save(commit=False)
+                            # send otp
+                            otp = helper.get_random_otp()
+                            print(f"Otp for test is : {otp}")
+                            # helper.sent_otp(phone_number, otp)
+                            # save otp
+                            user.otp = otp
+                            user.save()
+                            return redirect(f"otp/{phone_number}/")
+                        else:
+                            # send otp
+                            otp = helper.get_random_otp()
+                            print(f"Otp for test is : {otp}")
+                            # helper.sent_otp(phone_number, otp)
+                            user = OtpCode.objects.filter(phone_number=phone_number).update(otp=otp)
+                            return redirect(f"otp/{phone_number}/")
                     
 
     else: # Get request
@@ -96,6 +102,12 @@ def otp_view(request, phone_number):
     if request.POST:
         form = OtpForm(request.POST)
         if form.is_valid():
+
+            # check otp expiration
+            if not helper.check_otp_expiration(phone_number): #False
+                return HttpResponseRedirect(reverse('authenticate'))
+
+
             if user.otp != int(request.POST.get('otp')):
                 return HttpResponseRedirect(reverse('authenticate'))
             else:

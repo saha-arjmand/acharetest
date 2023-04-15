@@ -15,4 +15,7 @@ class AccountAdmin(UserAdmin):
 admin.site.register(Account, AccountAdmin)
 
 
-admin.site.register(OtpCode)
+
+class OtpCode_admin(admin.ModelAdmin):
+    list_display = ('phone_number', 'otp', 'otp_create_time')
+admin.site.register(OtpCode, OtpCode_admin)
