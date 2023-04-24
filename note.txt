@@ -1,10 +1,7 @@
 todo
 
-. add phone field in password form
-
-
-
-
+. set phone number as forigen key with account table
+. Solve if phone does not exist then get otp
 
 
 

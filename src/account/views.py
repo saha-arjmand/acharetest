@@ -1,3 +1,6 @@
+from django.shortcuts import render
+
+# Create your views here.
 from django.shortcuts import render, redirect
 from account.forms import AccountAuthenticationForm, loginForm, RegistrationForm, OtpForm, OtpFormPhoneNumber
 from django.contrib.auth import login, authenticate, logout
@@ -102,13 +105,17 @@ def otp_view(request, phone_number):
     if request.POST:
         form = OtpForm(request.POST)
         if form.is_valid():
+            # check user block
+            print(helper.block_wrong_password_check(phone_number))
+
+                # block user
 
             # check otp expiration
             if not helper.check_otp_expiration(phone_number): #False
                 return HttpResponseRedirect(reverse('authenticate'))
 
-
             if user.otp != int(request.POST.get('otp')):
+                helper.block_wrong_password_check(phone_number, wrong=True)
                 return HttpResponseRedirect(reverse('authenticate'))
             else:
                 user.is_active = True

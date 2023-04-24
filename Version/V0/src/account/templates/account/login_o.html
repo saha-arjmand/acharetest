@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>ورود</h2>
+<br>
+<p>شماره همراه : {{phone_number}}</p>
+
+<form method="post">{% csrf_token %}
+    {% for field in login_form %}
+        <P>
+            {{field.label_tag}}
+            {{field}}
+
+            {% if field.help_text %}
+                <small style="color: gray;">{{field.help_text}}</small>
+            {% endif %}
+
+            {% for error in field.errors %}
+                <p style="color: red;">{{error}}</p>
+            {% endfor %}
+
+            {% if login_form.non_field_errors %}
+                <div style="color: red;">
+                    <p>{{login_form.non_field_errors}}</p>
+                </div>
+            {% endif %}
+        </P>
+    {% endfor %}
+    <button type="submit">ورود</button>
+</form>
+
+{% endblock content %}
