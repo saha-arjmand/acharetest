@@ -19,6 +19,7 @@ def authenticate_view(request):
         if form.is_valid():
             phone_number = request.POST['phone_number']
 
+            # Check PhoneNumber and Email are xist
             account_exist = Account.objects.filter(phone_number=phone_number).exists()
             email_exist_query = Account.objects.filter(phone_number=phone_number).values_list('email', flat=True)
             for anyEmail in email_exist_query:
@@ -27,39 +28,38 @@ def authenticate_view(request):
                 else:
                     email_exist = False
 
+            # if account exist then login
             if  account_exist == True and email_exist == True:
                 id = Account.objects.filter(phone_number=phone_number).values_list('id', flat=True)
                 for anyID in id:
                     return redirect(f"login/{anyID}/")
             
-            else: # phone number and email don't exist in database
-                form = OtpFormPhoneNumber(request.POST)
-                account_exist = OtpCode.objects.filter(phone_number=phone_number).exists()
+            # phone number and email don't exist in database
+            # if account does not exist then register
+            else: 
 
-                # update otp_create_time
-                if helper.wait_sms(phone_number): # Avoid repeated user requests
-                    OtpCode.objects.filter(phone_number=phone_number).update(otp_create_time=datetime.datetime.now())
+                # if helper.wait_sms(phone_number): # Avoid repeated user requests
+                #     OtpCode.objects.filter(phone_number=phone_number).update(otp_create_time=datetime.datetime.now())
+                account_exist = Account.objects.filter(phone_number=phone_number).exists()
+                if account_exist == False:
+                    user = form.save(commit=False)
+                    user.save()
 
-                    if form.is_valid():
-                        if account_exist == False:
-                            user = form.save(commit=False)
-                            # send otp
-                            otp = helper.get_random_otp()
-                            print(f"Otp for test is : {otp}")
-                            # helper.sent_otp(phone_number, otp)
-                            # save otp
-                            user.otp = otp
-                            user.save()
-                            return redirect(f"otp/{phone_number}/")
-                        else:
-                            # send otp
-                            otp = helper.get_random_otp()
-                            print(f"Otp for test is : {otp}")
-                            # helper.sent_otp(phone_number, otp)
-                            user = OtpCode.objects.filter(phone_number=phone_number).update(otp=otp)
-                            return redirect(f"otp/{phone_number}/")
-                    
+                # find id of user for create otp code
+                phone_number = request.POST['phone_number']
+                id = Account.objects.get(phone_number = phone_number)
 
+                # send otp
+                otp = helper.get_random_otp()
+                print(f"Otp for test is : {otp}")
+
+                # save otp data
+                otp_user = OtpCode(account= id, otp = otp)
+                otp_user.save()
+
+                return redirect(f"otp/{id.id}/")
+                # return redirect('home')
+            
     else: # Get request
         form = AccountAuthenticationForm()
 
@@ -97,37 +97,41 @@ def login_view(request, account_id):
     return render(request, 'account/login.html', context)
 
 
-def otp_view(request, phone_number):
+def otp_view(request, id):
     context = {}
+    user = OtpCode.objects.get(account = id)
 
-    user = OtpCode.objects.get(phone_number = phone_number)
 
     if request.POST:
         form = OtpForm(request.POST)
         if form.is_valid():
+
+            # Check otp is correct
+            if user.otp != int(request.POST.get('otp')):
+                return HttpResponseRedirect(reverse('authenticate'))
+            else:
+                # active user if otp correct
+                account = Account.objects.get(id = id)
+                account.is_active = True
+                account.save()
+                request.session['id'] = id
+                return redirect('register')
+            
+    else: # Get request
+        form = OtpForm()
+
+
+
             # check user block
-            print(helper.block_wrong_password_check(phone_number))
+            # print(helper.block_wrong_password_check(phone_number))
 
                 # block user
 
             # check otp expiration
-            if not helper.check_otp_expiration(phone_number): #False
-                return HttpResponseRedirect(reverse('authenticate'))
+            # if not helper.check_otp_expiration(phone_number): #False
+            #     return HttpResponseRedirect(reverse('authenticate'))
 
-            if user.otp != int(request.POST.get('otp')):
-                helper.block_wrong_password_check(phone_number, wrong=True)
-                return HttpResponseRedirect(reverse('authenticate'))
-            else:
-                user.is_active = True
-                user.save()
-                try:
-                    request.session['user_mobile'] = phone_number
-                    return redirect('register')
-                except Exception as e:
-                    print(e)
 
-    else: # Get request
-        form = OtpForm()
 
 
     context['otp_form'] = form
@@ -135,7 +139,8 @@ def otp_view(request, phone_number):
 
 
 def register_view(request):
-    phone_number = request.session.get('user_mobile')
+    id = request.session.get('id')
+    phone_number = Account.objects.get(id = id).phone_number
     context = {}
     context['phone_number'] = phone_number
 

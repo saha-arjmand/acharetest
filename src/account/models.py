@@ -70,7 +70,7 @@ class Account(AbstractBaseUser):
     # backend = ''
 
     def __str__(self) :
-        return self.first_name + " " + self.last_name + " , " + str(self.phone_number)
+        return str(self.phone_number)
 
     def has_perm(self, perm, obj=None):
         return self.is_admin
@@ -80,7 +80,7 @@ class Account(AbstractBaseUser):
 
 
 class OtpCode(models.Model):
-    phone_number                        = models.OneToOneField(Account, on_delete=models.CASCADE, primary_key=True)
+    account                             = models.OneToOneField(Account, on_delete=models.CASCADE, primary_key=True)
     otp                                 = models.PositiveIntegerField(blank=True, null=True)
     otp_create_time                     = models.DateTimeField(auto_now=True)
     wrong_code_enter_by_time            = models.PositiveIntegerField(default=0)
@@ -88,4 +88,4 @@ class OtpCode(models.Model):
     user_block                          = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.phone_number
+        return self.account.phone_number

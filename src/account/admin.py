@@ -18,6 +18,6 @@ admin.site.register(Account, AccountAdmin)
 
 class OtpCode_admin(admin.ModelAdmin):
     readonly_fields = ('otp_create_time','time_of_wrong_code_enter_by_time')
-    list_display = ('phone_number', 'otp', 'otp_create_time', 'wrong_code_enter_by_time', 'time_of_wrong_code_enter_by_time', 'user_block')
+    list_display = ('account', 'otp', 'otp_create_time', 'wrong_code_enter_by_time', 'time_of_wrong_code_enter_by_time', 'user_block')
 
 admin.site.register(OtpCode, OtpCode_admin)

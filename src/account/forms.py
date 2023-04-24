@@ -39,15 +39,19 @@ class loginForm(forms.ModelForm):
         # if not authenticate(password = password):
         #     raise forms.ValidationError("Invalid login")
 
+
 class OtpFormPhoneNumber(forms.ModelForm):
-    phone_number = forms.CharField(label="شماره موبایل", max_length=11)
+    # phone_number = forms.CharField(label="شماره موبایل", max_length=11)
 
     class Meta:
         model = OtpCode
-        fields = ['phone_number']
+        fields = ['otp']
 
-    def clean(self) :
-        phone_number = self.cleaned_data['phone_number']
+        # def __init__(self, *args, **kwargs) :
+        #     user = kwargs.pop('user', '')
+
+    # def clean(self) :
+    #     phone_number = self.cleaned_data['phone_number']
     
 
 class OtpForm(forms.ModelForm):
@@ -55,7 +59,7 @@ class OtpForm(forms.ModelForm):
     otp = forms.IntegerField()
 
     class Meta:
-        model = Account
+        model = OtpCode
         fields = ['otp',]
 
     def clean(self) :

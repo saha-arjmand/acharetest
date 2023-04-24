@@ -22,7 +22,7 @@ urlpatterns = [
     # login
     path('authenticate/login/<int:account_id>/', login_view, name="login"),
     # otp
-    path('authenticate/otp/<str:phone_number>/', otp_view, name="otp"),
+    path('authenticate/otp/<str:id>/', otp_view, name="otp"),
     # register
     path(' register/', register_view, name="register"),
     # logout
