@@ -9,7 +9,9 @@ from . import helper
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
+# Security Methods
 from account.security_methods.wait_sms import wait_sms
+from account.security_methods.otp_expiration import check_otp_expiration
 
 
 def authenticate_view(request):
@@ -105,16 +107,20 @@ def otp_view(request, id):
         form = OtpForm(request.POST)
         if form.is_valid():
 
-            # Check otp is correct
-            if user.otp != int(request.POST.get('otp')):
+            # check otp expiration
+            if check_otp_expiration(id) == False :
                 return HttpResponseRedirect(reverse('authenticate'))
             else:
-                # active user if otp correct
-                account = Account.objects.get(id = id)
-                account.is_active = True
-                account.save()
-                request.session['id'] = id
-                return redirect('register')
+                # Check otp is correct
+                if user.otp != int(request.POST.get('otp')):
+                    return HttpResponseRedirect(reverse('authenticate'))
+                else:
+                    # active user if otp correct
+                    account = Account.objects.get(id = id)
+                    account.is_active = True
+                    account.save()
+                    request.session['id'] = id
+                    return redirect('register')
             
     else: # Get request
         form = OtpForm()
@@ -125,13 +131,6 @@ def otp_view(request, id):
             # print(helper.block_wrong_password_check(phone_number))
 
                 # block user
-
-            # check otp expiration
-            # if not helper.check_otp_expiration(phone_number): #False
-            #     return HttpResponseRedirect(reverse('authenticate'))
-
-
-
 
     context['otp_form'] = form
     return render(request, 'account/otp.html', context)

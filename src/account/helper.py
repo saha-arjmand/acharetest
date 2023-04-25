@@ -27,23 +27,6 @@ def get_random_otp():
     return randint(1000,9999)
 
 
-def check_otp_expiration(mobile):
-    try:
-        otp_user = models.OtpCode.objects.get(phone_number = mobile)
-        now = datetime.datetime.now()
-        otp_time = otp_user.otp_create_time
-        diff_time = now - otp_time
-        print(f"expiration time : {diff_time.seconds}")
-
-        if diff_time.seconds > 120:
-            return False
-        else:
-            return True
-        
-    except models.Account.DoesNotExist:
-        return False
-    
-
 
 def block_wrong_password_check(mobile, wrong = False):
     # check user not block

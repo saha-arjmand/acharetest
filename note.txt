@@ -1,6 +1,6 @@
 todo
 
-. move wait sms to security method module
+. sms expiration 
 
 
 
@@ -14,3 +14,4 @@ done
 . create home app
 . set phone number as foreign key with account table
 . Solve this error : [ValidationError(['Account with this Phone number already exists.'])]
+. move wait sms to security method module
