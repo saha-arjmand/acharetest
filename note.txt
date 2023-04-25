@@ -1,6 +1,7 @@
 todo
 
-. sms expiration 
+. setup postgresql for db
+. work on wrong otp entered by user
 
 
 
@@ -15,3 +16,4 @@ done
 . set phone number as foreign key with account table
 . Solve this error : [ValidationError(['Account with this Phone number already exists.'])]
 . move wait sms to security method module
+. sms expiration 

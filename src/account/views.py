@@ -12,6 +12,7 @@ from django.urls import reverse
 # Security Methods
 from account.security_methods.wait_sms import wait_sms
 from account.security_methods.otp_expiration import check_otp_expiration
+from account.security_methods.block_user_for_wrong_otp import check_block_user, wrong_otp
 
 
 def authenticate_view(request):
@@ -106,13 +107,25 @@ def otp_view(request, id):
     if request.POST:
         form = OtpForm(request.POST)
         if form.is_valid():
-
             # check otp expiration
             if check_otp_expiration(id) == False :
                 return HttpResponseRedirect(reverse('authenticate'))
             else:
                 # Check otp is correct
                 if user.otp != int(request.POST.get('otp')):
+
+                    # Adding the number of mistakes to block the user if the mistake is more than 3 times
+                    # wrong_otp(id)
+
+                    OtpCode.objects.update()
+                    obj = OtpCode.objects.get(account_id = id)
+                    print(OtpCode.objects.get(account_id = id).wrong_code_enter_by_time)
+                    print(OtpCode.objects.get(account_id = id).otp_create_time)
+                    print(OtpCode.objects.get(account_id = id).otp)
+                    print(id)
+                    obj.wrong_code_enter_by_time = 10
+                    obj.save()
+                    
                     return HttpResponseRedirect(reverse('authenticate'))
                 else:
                     # active user if otp correct
@@ -124,13 +137,6 @@ def otp_view(request, id):
             
     else: # Get request
         form = OtpForm()
-
-
-
-            # check user block
-            # print(helper.block_wrong_password_check(phone_number))
-
-                # block user
 
     context['otp_form'] = form
     return render(request, 'account/otp.html', context)

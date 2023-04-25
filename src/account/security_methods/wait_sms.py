@@ -21,7 +21,7 @@ def wait_sms(mobile):
             otp_time = otp_user.otp_create_time
             diff_time = now - otp_time
 
-            if diff_time.seconds > 120:
+            if diff_time.seconds > 10:
                 # update send code time
                 models.OtpCode.objects.filter(account = id).update(otp_create_time=datetime.datetime.now())
                 return True
