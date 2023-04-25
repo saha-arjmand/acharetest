@@ -56,8 +56,13 @@ def authenticate_view(request):
                     print(f"Otp for test is : {otp}")
 
                     # save otp data
-                    otp_user = OtpCode(account= id, otp = otp)
-                    otp_user.save()
+                    if OtpCode.objects.filter(account = id).exists() == False:
+                        otp_user = OtpCode(account= id, otp = otp)
+                        otp_user.save()
+                    else:
+                        otp_user = OtpCode.objects.get(account = id)
+                        otp_user.otp = otp
+                        otp_user.save()
 
                     return redirect(f"otp/{id.id}/")
                     # return redirect('home')
@@ -117,14 +122,14 @@ def otp_view(request, id):
                     # Adding the number of mistakes to block the user if the mistake is more than 3 times
                     # wrong_otp(id)
 
-                    OtpCode.objects.update()
                     obj = OtpCode.objects.get(account_id = id)
-                    print(OtpCode.objects.get(account_id = id).wrong_code_enter_by_time)
-                    print(OtpCode.objects.get(account_id = id).otp_create_time)
-                    print(OtpCode.objects.get(account_id = id).otp)
-                    print(id)
-                    obj.wrong_code_enter_by_time = 10
-                    obj.save()
+                    # x = OtpCode.objects.filter(account = id).values_list()
+                    # for anyItem in x:
+                    #     print(anyItem)
+                    # print(OtpCode.objects.get(account = id).wrong_code_enter_by_time2)
+                    # print(OtpCode.objects.get(account_id = id).otp_create_time)
+                    # print(OtpCode.objects.get(account_id = id).otp)
+                    # print(id)
                     
                     return HttpResponseRedirect(reverse('authenticate'))
                 else:
