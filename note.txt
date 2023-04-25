@@ -1,6 +1,6 @@
 todo
 
-. Solve this error : [ValidationError(['Account with this Phone number already exists.'])]
+
 
 
 
@@ -12,3 +12,4 @@ done
 . change mysite to src
 . create home app
 . set phone number as foreign key with account table
+. Solve this error : [ValidationError(['Account with this Phone number already exists.'])]

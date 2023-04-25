@@ -37,28 +37,26 @@ def authenticate_view(request):
             # phone number and email don't exist in database
             # if account does not exist then register
             else: 
+                if helper.wait_sms(phone_number): # Avoid repeated user requests    
 
-                # if helper.wait_sms(phone_number): # Avoid repeated user requests
-                #     OtpCode.objects.filter(phone_number=phone_number).update(otp_create_time=datetime.datetime.now())
-                account_exist = Account.objects.filter(phone_number=phone_number).exists()
-                if account_exist == False:
-                    user = form.save(commit=False)
-                    user.save()
+                    if account_exist == False:
+                        user = form.save(commit=False)
+                        user.save()
 
-                # find id of user for create otp code
-                phone_number = request.POST['phone_number']
-                id = Account.objects.get(phone_number = phone_number)
+                    # find id of user for create otp code
+                    phone_number = request.POST['phone_number']
+                    id = Account.objects.get(phone_number = phone_number)
 
-                # send otp
-                otp = helper.get_random_otp()
-                print(f"Otp for test is : {otp}")
+                    # send otp
+                    otp = helper.get_random_otp()
+                    print(f"Otp for test is : {otp}")
 
-                # save otp data
-                otp_user = OtpCode(account= id, otp = otp)
-                otp_user.save()
+                    # save otp data
+                    otp_user = OtpCode(account= id, otp = otp)
+                    otp_user.save()
 
-                return redirect(f"otp/{id.id}/")
-                # return redirect('home')
+                    return redirect(f"otp/{id.id}/")
+                    # return redirect('home')
             
     else: # Get request
         form = AccountAuthenticationForm()
