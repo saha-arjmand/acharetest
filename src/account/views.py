@@ -8,7 +8,8 @@ from .models import Account, OtpCode
 from . import helper 
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-import datetime
+
+from account.security_methods.wait_sms import wait_sms
 
 
 def authenticate_view(request):
@@ -37,7 +38,7 @@ def authenticate_view(request):
             # phone number and email don't exist in database
             # if account does not exist then register
             else: 
-                if helper.wait_sms(phone_number): # Avoid repeated user requests    
+                if wait_sms(phone_number): # Avoid repeated user requests    
 
                     if account_exist == False:
                         user = form.save(commit=False)

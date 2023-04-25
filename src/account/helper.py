@@ -44,34 +44,6 @@ def check_otp_expiration(mobile):
         return False
     
 
-"""
-    Wait if user enter the wrong code
-"""
-def wait_sms(mobile):
-    account_exist = models.Account.objects.filter(phone_number=mobile).exists()
-    if account_exist:
-        id = models.Account.objects.get(phone_number = mobile)
-
-        try:
-            otp_user = models.OtpCode.objects.get(account = id)
-            now = datetime.datetime.now()
-            otp_time = otp_user.otp_create_time
-            diff_time = now - otp_time
-
-            if diff_time.seconds > 120:
-                # update send code time
-                models.OtpCode.objects.filter(account = id).update(otp_create_time=datetime.datetime.now())
-                return True
-            else:
-                print("The user must wait")
-                print(f"wait for : {120 - diff_time.seconds} seconds")
-                return False
-            
-        except models.Account.DoesNotExist:
-            return False
-    else:
-        return True
-    
 
 def block_wrong_password_check(mobile, wrong = False):
     # check user not block
