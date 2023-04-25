@@ -1,7 +1,6 @@
 todo
 
-. set phone number as forigen key with account table
-. Solve if phone does not exist then get otp
+. Solve this error : [ValidationError(['Account with this Phone number already exists.'])]
 
 
 
@@ -12,3 +11,4 @@ done
 . setup a django project
 . change mysite to src
 . create home app
+. set phone number as foreign key with account table

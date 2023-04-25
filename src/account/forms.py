@@ -10,7 +10,15 @@ class RegistrationForm(UserCreationForm):
 
     class Meta:
         model = Account
-        fields = ["phone_number" ,"email", "first_name", "last_name", "password1", "password2",]
+        fields = ["phone_number", "email", "first_name", "last_name", "password1", "password2",]
+
+        def clean(self) :
+            phone_number            = self.cleaned_data['phone_number']
+            email                   = self.cleaned_data['email']
+            first_name              = self.cleaned_data['first_name']
+            last_name               = self.cleaned_data['last_name']
+            password1               = self.cleaned_data['password1']
+            password2               = self.cleaned_data['password2']
         
 
 class AccountAuthenticationForm(forms.ModelForm):
@@ -41,18 +49,11 @@ class loginForm(forms.ModelForm):
 
 
 class OtpFormPhoneNumber(forms.ModelForm):
-    # phone_number = forms.CharField(label="شماره موبایل", max_length=11)
 
     class Meta:
         model = OtpCode
         fields = ['otp']
 
-        # def __init__(self, *args, **kwargs) :
-        #     user = kwargs.pop('user', '')
-
-    # def clean(self) :
-    #     phone_number = self.cleaned_data['phone_number']
-    
 
 class OtpForm(forms.ModelForm):
 

@@ -139,26 +139,39 @@ def otp_view(request, id):
 
 
 def register_view(request):
-    id = request.session.get('id')
-    phone_number = Account.objects.get(id = id).phone_number
     context = {}
+
+    # get id from session
+    id = request.session.get('id')
+
+    # get object that we want work on it
+    obj = Account.objects.get(id = id)
+    phone_number = obj.phone_number
+    # for show phone number in the form
     context['phone_number'] = phone_number
 
-    if request.POST:
-        form = RegistrationForm(request.POST)
+    # becuase already we have form so we should update it
+    form = RegistrationForm(instance = obj)
+
+    if request.method == 'POST':
+        form = RegistrationForm(request.POST, request.FILES, instance=obj)
         if form.is_valid():
-            form.save()
+            obj = form.save()
+            
+            # login
             phone = phone_number
             raw_password = form.cleaned_data.get('password1')
-
             account = authenticate(phone_number= phone, password = raw_password)
             login(request, account)
+
             return redirect('home')
         else:
-            context['registration_form'] = form
+            print(form.errors.as_data()) # here you print errors to terminal
+
     else: # GET request
         form = RegistrationForm()
         context['registration_form'] = form
+    
 
     return render(request, 'account/register.html', context)
 
