@@ -13,6 +13,7 @@ from django.urls import reverse
 from account.security_methods.wait_sms import wait_sms
 from account.security_methods.otp_expiration import check_otp_expiration
 from account.security_methods.block_user_for_wrong_otp import check_block_user, wrong_otp
+from account.security_methods.block_user_for_wrong_password import login_check_block_user, login_wrong_password
 
 
 def authenticate_view(request):
@@ -94,10 +95,17 @@ def login_view(request, account_id):
         form = loginForm(request.POST)
         if form.is_valid():
             password = request.POST['password']
-            user = authenticate(phone_number=phone, password= password)
 
-            if user:
-                login(request, user)
+            if login_check_block_user(phone) == False:
+                user = authenticate(phone_number=phone, password= password)
+                if user == None:
+                    login_wrong_password(phone)
+
+                if user:
+                    login(request, user)
+                    return redirect("home")
+                
+            else: # user is block
                 return redirect("home")
 
     else: # Get request

@@ -1,7 +1,6 @@
 todo
 
- . write unblock method on user block method
-
+. block user with wrong password in login
 
 
 
@@ -18,3 +17,4 @@ done
 . setup postgresql for db
 . fix otp creation table bug
 . work on wrong otp entered by user
+. write unblock method on user block method
