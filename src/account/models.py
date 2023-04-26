@@ -86,6 +86,7 @@ class OtpCode(models.Model):
     wrong_code_enter_by_time            = models.PositiveIntegerField(default=0)
     time_of_wrong_code_enter_by_time    = models.DateTimeField(auto_now=True)
     user_block                          = models.BooleanField(default=False)
+    block_time                          = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
         return self.account.phone_number

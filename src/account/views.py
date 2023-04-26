@@ -124,6 +124,7 @@ def otp_view(request, id):
                     # Adding the number of mistakes to block the user if the mistake is more than 3 times
                     wrong_otp(id)
                     return HttpResponseRedirect(reverse('authenticate'))
+                
                 else:
                     # active user if otp correct
                     account = Account.objects.get(id = id)
