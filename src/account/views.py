@@ -120,6 +120,13 @@ def login_view(request, account_id):
 
                 if user:
                     login(request, user)
+
+                    # save ip to account field:
+                    ip = get_ip(request)
+                    obj = Account.objects.get(phone_number = phone)
+                    obj.ip = ip
+                    obj.save()
+
                     return redirect("home")
                 
             else: # user is block
