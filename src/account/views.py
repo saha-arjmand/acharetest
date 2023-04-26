@@ -120,16 +120,7 @@ def otp_view(request, id):
                 if user.otp != int(request.POST.get('otp')):
 
                     # Adding the number of mistakes to block the user if the mistake is more than 3 times
-                    # wrong_otp(id)
-
-                    obj = OtpCode.objects.get(account_id = id)
-                    # x = OtpCode.objects.filter(account = id).values_list()
-                    # for anyItem in x:
-                    #     print(anyItem)
-                    # print(OtpCode.objects.get(account = id).wrong_code_enter_by_time2)
-                    # print(OtpCode.objects.get(account_id = id).otp_create_time)
-                    # print(OtpCode.objects.get(account_id = id).otp)
-                    # print(id)
+                    wrong_otp(id)
                     
                     return HttpResponseRedirect(reverse('authenticate'))
                 else:

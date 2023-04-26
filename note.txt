@@ -1,6 +1,5 @@
 todo
 
-. setup postgresql for db
 . work on wrong otp entered by user
 
 
@@ -17,3 +16,5 @@ done
 . Solve this error : [ValidationError(['Account with this Phone number already exists.'])]
 . move wait sms to security method module
 . sms expiration 
+. setup postgresql for db
+. fix otp creation table bug

@@ -31,10 +31,11 @@ def wrong_otp(id):
         if otp_user.wrong_code_enter_by_time < 3:
             otp_user.wrong_code_enter_by_time += 1
             otp_user.save()
-        # elif otp_user.wrong_code_enter_by_time >= 3:
-        #     otp_user.update(wrong_code_enter_by_time = 3)
+        elif otp_user.wrong_code_enter_by_time >= 3:
+            otp_user.wrong_code_enter_by_time = 3
+            otp_user.save()
 
-        # print(f"this is number of wrong time : {otp_user.wrong_code_enter_by_time}")
+        print(f"this is number of wrong time : {otp_user.wrong_code_enter_by_time}")
 
     except models.Account.DoesNotExist:
         return False
