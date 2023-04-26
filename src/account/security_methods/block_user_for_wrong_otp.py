@@ -11,17 +11,16 @@ from .. import models
 """
 def check_block_user(id):
 
-    try:
-        otp_user = models.OtpCode.objects.get(account = id)
-        if otp_user.wrong_code_enter_by_time == 3:
-            otp_user.user_block == True
-            otp_user.save()
+    otp_user = models.OtpCode.objects.get(account = id)
+    if otp_user.wrong_code_enter_by_time == 3:
+        otp_user.user_block == True
+        otp_user.save()
+        print("Your user has been blocked due to entering the wrong otp !")
+        return True
 
-        elif otp_user.wrong_code_enter_by_time < 3:
-            pass
-        
-    except models.Account.DoesNotExist:
+    elif otp_user.wrong_code_enter_by_time < 3:
         return False
+
     
 
 def wrong_otp(id):

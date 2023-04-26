@@ -52,20 +52,23 @@ def authenticate_view(request):
                     id = Account.objects.get(phone_number = phone_number)
 
                     # send otp
-                    otp = helper.get_random_otp()
-                    print(f"Otp for test is : {otp}")
+                    if check_block_user(id) == False:
+                        otp = helper.get_random_otp()
+                        print(f"Otp for test is : {otp}")
 
-                    # save otp data
-                    if OtpCode.objects.filter(account = id).exists() == False:
-                        otp_user = OtpCode(account= id, otp = otp)
-                        otp_user.save()
+                        # save otp data
+                        if OtpCode.objects.filter(account = id).exists() == False:
+                            otp_user = OtpCode(account= id, otp = otp)
+                            otp_user.save()
+                        else:
+                            otp_user = OtpCode.objects.get(account = id)
+                            otp_user.otp = otp
+                            otp_user.save()
+
+                        return redirect(f"otp/{id.id}/")
+                        # return redirect('home')
                     else:
-                        otp_user = OtpCode.objects.get(account = id)
-                        otp_user.otp = otp
-                        otp_user.save()
-
-                    return redirect(f"otp/{id.id}/")
-                    # return redirect('home')
+                        return HttpResponseRedirect(reverse('authenticate'))
             
     else: # Get request
         form = AccountAuthenticationForm()
@@ -118,10 +121,8 @@ def otp_view(request, id):
             else:
                 # Check otp is correct
                 if user.otp != int(request.POST.get('otp')):
-
                     # Adding the number of mistakes to block the user if the mistake is more than 3 times
                     wrong_otp(id)
-                    
                     return HttpResponseRedirect(reverse('authenticate'))
                 else:
                     # active user if otp correct

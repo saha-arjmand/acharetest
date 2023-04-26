@@ -1,6 +1,5 @@
 todo
 
-. work on wrong otp entered by user
 
 
 
@@ -18,3 +17,4 @@ done
 . sms expiration 
 . setup postgresql for db
 . fix otp creation table bug
+. work on wrong otp entered by user
