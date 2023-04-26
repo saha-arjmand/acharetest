@@ -54,7 +54,25 @@ def authenticate_view(request):
                     id = Account.objects.get(phone_number = phone_number)
 
                     # send otp
-                    if check_block_user(id) == False:
+                    if OtpCode.objects.filter(account = id).exists == True:
+                        if check_block_user(id) == False :
+                            otp = helper.get_random_otp()
+                            print(f"Otp for test is : {otp}")
+
+                            # save otp data
+                            if OtpCode.objects.filter(account = id).exists() == False:
+                                otp_user = OtpCode(account= id, otp = otp)
+                                otp_user.save()
+                            else:
+                                otp_user = OtpCode.objects.get(account = id)
+                                otp_user.otp = otp
+                                otp_user.save()
+
+                            return redirect(f"otp/{id.id}/")
+                            # return redirect('home')
+                        else:
+                            return HttpResponseRedirect(reverse('authenticate'))
+                    else:
                         otp = helper.get_random_otp()
                         print(f"Otp for test is : {otp}")
 
@@ -69,8 +87,6 @@ def authenticate_view(request):
 
                         return redirect(f"otp/{id.id}/")
                         # return redirect('home')
-                    else:
-                        return HttpResponseRedirect(reverse('authenticate'))
             
     else: # Get request
         form = AccountAuthenticationForm()
@@ -168,6 +184,12 @@ def register_view(request):
         form = RegistrationForm(request.POST, request.FILES, instance=obj)
         if form.is_valid():
             obj = form.save()
+
+            # save ip
+            ip = get_ip(request)
+            obj.ip = ip
+            obj.save()
+
             
             # login
             phone = phone_number

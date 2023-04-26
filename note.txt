@@ -1,6 +1,8 @@
 todo
 
-. block user with wrong password in login
+. save ip to account ip field
+. create ip field for otp table
+. block ip If the user makes a wrong password three times from the same address and block for 30 minutes
 
 
 
@@ -18,3 +20,4 @@ done
 . fix otp creation table bug
 . work on wrong otp entered by user
 . write unblock method on user block method
+. block user with wrong password in login

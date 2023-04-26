@@ -15,4 +15,4 @@ def get_ip(request):
     else:
         ip = request.META.get('REMOTE_ADDR')
 
-    print("IP ADDRESS OF USER : ", ip)
+    return ip
