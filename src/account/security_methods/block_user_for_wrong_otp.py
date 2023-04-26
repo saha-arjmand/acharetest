@@ -14,7 +14,20 @@ def check_block_user(id):
 
     otp_user = models.OtpCode.objects.get(account = id)
     if otp_user.wrong_code_enter_by_time == 3:
-        return True
+
+        now = datetime.datetime.now()
+        block_time = otp_user.block_time
+        diff_time = now - block_time
+
+        if diff_time.seconds >= 60 * 60:
+            otp_user.user_block = False
+            otp_user.wrong_code_enter_by_time = 0
+            otp_user.save()
+            print("You are unblocked !")
+            return False
+        else:
+            print(f"Remaining time to unblock is {(3600 - diff_time.seconds)//60} minutes")
+            return True
 
     elif otp_user.wrong_code_enter_by_time < 3:
         return False
